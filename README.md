@@ -10,6 +10,7 @@ A Flask REST API for managing inventory and retrieving product information from 
 - Import an external product into inventory by barcode.
 - Health-check endpoint.
 - Automated API tests using pytest.
+- Command-line interface for all inventory operations.
 
 ## Technology Stack
 
@@ -133,7 +134,7 @@ Look up an external product by barcode:
 Import an external product into inventory:
 
     python -m app.cli.inventory_cli import 3017620422003
-
+python -m app.cli.inventory_cli health
 Display all available commands:
 
     python -m app.cli.inventory_cli --help
