@@ -43,6 +43,7 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
 
     commands.add_parser("list", help="List inventory items")
+    commands.add_parser("health", help="Check API health")
 
     show = commands.add_parser("show", help="Show an inventory item")
     show.add_argument("id", type=int)
@@ -78,6 +79,9 @@ def main():
 
     args = parser.parse_args()
     base_url = args.base_url.rstrip("/")
+
+    if args.command == "health":
+        return api_request("GET", f"{base_url}/health")
 
     if args.command == "list":
         return api_request("GET", f"{base_url}/inventory")
