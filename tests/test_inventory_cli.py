@@ -91,3 +91,21 @@ def test_connection_error_returns_nonzero(monkeypatch):
     result = inventory_cli.main()
 
     assert result == 1
+
+
+def test_health_command(monkeypatch):
+    response = Mock()
+    response.status_code = 200
+    response.ok = True
+    response.json.return_value = {"status": "healthy"}
+
+    request_mock = Mock(return_value=response)
+    monkeypatch.setattr(requests, "request", request_mock)
+    monkeypatch.setattr(sys, "argv", ["inventory_cli", "health"])
+
+    result = inventory_cli.main()
+
+    assert result == 0
+    request_mock.assert_called_once_with(
+        "GET", "http://127.0.0.1:5000/health", timeout=10
+    )
