@@ -14,6 +14,7 @@ def test_lookup_by_barcode_returns_product(monkeypatch):
             "product_name": "Nutella",
             "code": "3017620422003",
             "brands": "Ferrero",
+            "ingredients_text": "Sugar, palm oil, hazelnuts",
         },
     }
     response.raise_for_status.return_value = None
@@ -27,6 +28,7 @@ def test_lookup_by_barcode_returns_product(monkeypatch):
         "name": "Nutella",
         "barcode": "3017620422003",
         "brand": "Ferrero",
+        "ingredients": "Sugar, palm oil, hazelnuts",
     }
     request_mock.assert_called_once()
 
@@ -35,6 +37,15 @@ def test_lookup_by_barcode_returns_none_when_not_found(monkeypatch):
     response = Mock()
     response.json.return_value = {"status": 0}
     response.raise_for_status.return_value = None
+    monkeypatch.setattr(requests, "get", Mock(return_value=response))
+
+    assert openfoodfacts.lookup_by_barcode("0000000000000") is None
+
+
+def test_lookup_by_barcode_returns_none_on_http_404(monkeypatch):
+    # OpenFoodFacts answers HTTP 404 for an unknown barcode.
+    response = Mock()
+    response.status_code = 404
     monkeypatch.setattr(requests, "get", Mock(return_value=response))
 
     assert openfoodfacts.lookup_by_barcode("0000000000000") is None
